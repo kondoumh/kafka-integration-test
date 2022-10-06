@@ -36,9 +36,7 @@ public class EmbeddedKafkaIntegrationTest {
   @Autowired
   private ExampleListener listener;
 
-  private static final String TOPIC1 = "TestTopic-1";
-
-  private static final String TOPIC2 = "TestTopic-2";
+  private static final String TOPIC1 = "test-topic";
 
   @BeforeAll
   void setUp() {
@@ -53,14 +51,6 @@ public class EmbeddedKafkaIntegrationTest {
     var event = new ExampleEvent(100L, "Alice");
     template.send(TOPIC1, event);
     Thread.sleep(1000);
-    assertThat(listener.getPayload1()).isEqualTo("100");
-  }
-
-  @Test
-  public void recieve2() throws Exception {
-    var event = new ExampleEvent(200L, "Bob");
-    template.send(TOPIC2, event);
-    Thread.sleep(1000);
-    assertThat(listener.getPayload2()).isEqualTo("200");
+    assertThat(listener.getReceivedEventId()).isEqualTo(100L);
   }
 }

@@ -12,27 +12,15 @@ public class ExampleListener {
 
   private static final Logger logger = LoggerFactory.getLogger(ExampleListener.class);
 
-  private String payload1;
+  private Long receivedEventId;
 
-  private String payload2;
-
-  @KafkaListener(topics = "TestTopic-1")
+  @KafkaListener(topics = "test-topic")
   public void recieveTopic1(ExampleEvent event) {
     logger.info("received payload='{}'", event.toString());
-    payload1 = event.getEventId().toString();
+    receivedEventId = event.getEventId();
   }
 
-  @KafkaListener(topics = "TestTopic-2")
-  public void recieveTopic2(ExampleEvent event) {
-    logger.info("received payload='{}'", event.toString());
-    payload2 = event.getEventId().toString();
-  }
-
-  public String getPayload1() {
-    return payload1;
-  }
-
-  public String getPayload2() {
-    return payload2;
+  public Long getReceivedEventId() {
+    return receivedEventId;
   }
 }
