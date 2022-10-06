@@ -1,7 +1,9 @@
 spring:
-
   kafka:
     bootstrap-servers: ${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}
     consumer:
       group-id: example-group
-
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: com.kondoumh.kafkaintegrationtest.consumer.model.ExampleEvent

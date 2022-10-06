@@ -1,10 +1,11 @@
 package com.kondoumh.kafkaintegrationtest.consumer;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+
+import com.kondoumh.kafkaintegrationtest.consumer.model.ExampleEvent;
 
 @Component
 public class ExampleListener {
@@ -16,15 +17,15 @@ public class ExampleListener {
   private String payload2;
 
   @KafkaListener(topics = "TestTopic-1")
-  public void recieveTopic1(ConsumerRecord<?, ?> consumerRecord) {
-    logger.info("received payload='{}'", consumerRecord.toString());
-    payload1 = consumerRecord.value().toString();
+  public void recieveTopic1(ExampleEvent event) {
+    logger.info("received payload='{}'", event.toString());
+    payload1 = event.getEventId().toString();
   }
 
   @KafkaListener(topics = "TestTopic-2")
-  public void recieveTopic2(ConsumerRecord<?, ?> consumerRecord) {
-    logger.info("received payload='{}'", consumerRecord.toString());
-    payload2 = consumerRecord.value().toString();
+  public void recieveTopic2(ExampleEvent event) {
+    logger.info("received payload='{}'", event.toString());
+    payload2 = event.getEventId().toString();
   }
 
   public String getPayload1() {

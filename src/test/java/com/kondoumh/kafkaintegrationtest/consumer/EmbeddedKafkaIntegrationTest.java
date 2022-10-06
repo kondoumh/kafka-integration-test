@@ -7,13 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
 
+import com.kondoumh.kafkaintegrationtest.consumer.model.ExampleEvent;
+
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringSerializer;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Map;
 
 @SpringBootTest
 @DirtiesContext
@@ -23,8 +30,8 @@ public class EmbeddedKafkaIntegrationTest {
 
   @Autowired
   private EmbeddedKafkaBroker broker;
-  
-  private KafkaTemplate<String, String> template;
+
+  private KafkaTemplate<String, ExampleEvent> template;
 
   @Autowired
   private ExampleListener listener;
@@ -35,22 +42,25 @@ public class EmbeddedKafkaIntegrationTest {
 
   @BeforeAll
   void setUp() {
-    template = new KafkaTemplate<>(new DefaultKafkaProducerFactory<String, String>(KafkaTestUtils.producerProps(broker)));
+    Map<String, Object> config = KafkaTestUtils.producerProps(broker);
+    config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+    config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+    template = new KafkaTemplate<>(new DefaultKafkaProducerFactory<String, ExampleEvent>(config));
   }
 
   @Test
   public void recieve() throws Exception {
-    String data = "test message1";
-    template.send(TOPIC1, data);
+    var event = new ExampleEvent(100L, "Alice");
+    template.send(TOPIC1, event);
     Thread.sleep(1000);
-    assertThat(listener.getPayload1()).isEqualTo(data);
+    assertThat(listener.getPayload1()).isEqualTo("100");
   }
 
   @Test
   public void recieve2() throws Exception {
-    String data = "test message2";
-    template.send(TOPIC2, data);
+    var event = new ExampleEvent(200L, "Bob");
+    template.send(TOPIC2, event);
     Thread.sleep(1000);
-    assertThat(listener.getPayload2()).isEqualTo(data);
+    assertThat(listener.getPayload2()).isEqualTo("200");
   }
 }
