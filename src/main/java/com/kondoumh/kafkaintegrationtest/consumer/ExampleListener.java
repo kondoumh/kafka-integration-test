@@ -15,7 +15,7 @@ public class ExampleListener {
   private Long receivedEventId;
 
   @KafkaListener(topics = "test-topic")
-  public void recieveTopic1(ExampleEvent event) {
+  public void receive(ExampleEvent event) {
     logger.info("received payload='{}'", event.toString());
     receivedEventId = event.getEventId();
   }

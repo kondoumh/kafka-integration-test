@@ -47,7 +47,7 @@ public class EmbeddedKafkaIntegrationTest {
   }
 
   @Test
-  public void recieve() throws Exception {
+  public void receive() throws Exception {
     var event = new ExampleEvent(100L, "Alice");
     template.send(TOPIC1, event);
     Thread.sleep(1000);
